@@ -72,7 +72,7 @@ class Send:
             # 파일 첨부
             if attachment:
                 filenm = Path(attachment).name
-                with open(data_store.file_path +'\\'+ attachment, 'rb') as f:
+                with open(classi.data_store.file_path +'\\'+ attachment, 'rb') as f:
                     msg.add_attachment(f.read(), maintype='application', subtype='octet-stream', filename=filenm)
 
             # SMTP 서버로 발송

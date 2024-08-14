@@ -48,10 +48,10 @@ class MainWindow(QMainWindow):
     def create_folder(self):
         self.folder_name = self.lineEdit_2.text()
         directory = self.lineEdit.text()  # 입력한 경로
-        data_store.file_path = os.path.join(directory, self.folder_name)
+        classi.data_store.file_path = os.path.join(directory, self.folder_name)
 
         if self.folder_name and directory:
-            data_store.file_path = os.path.join(directory, self.folder_name)
+            classi.data_storedata_store.file_path = os.path.join(directory, self.folder_name)
             print(self.folder_path)
 
             # 폴더가 이미 존재하는지 확인
@@ -64,7 +64,7 @@ class MainWindow(QMainWindow):
                 os.system('explorer "{}"'.format(self.folder_name))
             else:
                 try:
-                    os.makedirs(data_store.file_path)#폴더 생성 함수
+                    os.makedirs(classi.data_store.file_path)#폴더 생성 함수
                     self.label.setText(f"결과 파일이 저장될'{self.folder_name}' 폴더가 생성되었습니다.")
                     self.label.setStyleSheet("color: green;")
                     # 현재 작업 디렉토리 변경
@@ -144,15 +144,15 @@ class MainWindow(QMainWindow):
                         # 파일 저장
                         if partner_name != '':
                             df_filtered = self.order_list[self.order_list['상품명'].str.contains(brand_name)]
-                            df_filtered.to_excel(f'{data_store.file_path}/{self.nowToday}_{partner_name}.xlsx')
+                            df_filtered.to_excel(f'{classi.data_storedata_store.file_path}/{self.nowToday}_{partner_name}.xlsx')
                         else:
                             self.label_3.setText(f"없는 brand name:, '{brand_name}', '{row['상품명']}'")
-                        print(data_store.file_path)
+                        print(classi.data_store.data_store.file_path)
                     # 폴더 안의 엑셀 파일 갯수 세서 출력
-                    files_and_dirs = os.listdir(data_store.file_path)
+                    files_and_dirs = os.listdir(classi.data_storedata_store.file_path)
                     print(files_and_dirs)
                     file_count = sum(
-                            1 for item in files_and_dirs if os.path.isfile(os.path.join(data_store.file_path, item)))
+                            1 for item in files_and_dirs if os.path.isfile(os.path.join(classi.data_store.data_store.file_path, item)))
                     print(file_count)
                     return self.label_3.setText(f"'총 전체 주문건수 {len(self.order_list)}건, {file_count}개 업체 파일이 만들어졌습니다")
                     self.label_2.setText(f"엑셀 파일을 분류하고 '{folder_name}' 폴더에 저장했습니다.")
@@ -171,7 +171,7 @@ class MainWindow(QMainWindow):
         # info_df = pd.read_excel(self.df2, engine='openpyxl')
         print(self.df2)
         # data폴더 파일 이름 목록 불러오기
-        file_list = os.listdir(data_store.file_path)  # 경로
+        file_list = os.listdir(classi.data_store.data_store.file_path)  # 경로
         # print(file_list)#attachment에 확장자명까지 기입
         # email_list.xlsx 파일이 포함되어 있다면 제거
         if 'email_list.xlsx' in file_list:
@@ -227,11 +227,11 @@ class MainWindow(QMainWindow):
         print(email_list)
         # 인덱스 컬럼 없이 값만 엑셀 저장
         # 저장할 경로
-        data_store.email_file_path = f"{data_store.file_path}/email_list.xlsx"
-        email_list.to_excel(data_store.email_file_path, index=False, header=True)
+        classi.data_store.data_store.email_file_path = f"{classi.data_store.data_store.file_path}/email_list.xlsx"
+        email_list.to_excel(classi.data_store.data_store.email_file_path, index=False, header=True)
         print('파일 생성 완료')
         # 파일 열기
-        os.startfile(data_store.email_file_path)
+        os.startfile(classi.data_store.data_store.email_file_path)
         self.label_4.setText("메일 내용 확인 후 메일 발송해주세요.")
         self.label_4.setStyleSheet("color: red;")
         self.email_content_confirmed = True  # 메일 내용이 확인되었음을 표시
@@ -250,7 +250,7 @@ class MainWindow(QMainWindow):
                 email_pw = self.lineEdit_9.text()  # 앱비밀번호
                 # 이메일 발송을 위한 엑셀 파일 경로 지정
                 # 이메일 발송을 위한 엑셀 파일 경로 지정
-                email_file_path = f"{data_store.file_path}\email_list.xlsx"
+                email_file_path = f"{classi.data_store.data_store.file_path}\email_list.xlsx"
                 print(email_file_path)  # 디버깅을 위해 경로 출력
                 # 이메일 발송 클래스 인스턴스 생성 및 발송
                 sender = Send(email_id, email_pw, email_file_path,self.label_4)
