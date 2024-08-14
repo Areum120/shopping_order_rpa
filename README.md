@@ -34,19 +34,19 @@ C:\Users\USERNAME\AppData\Roaming\Python\PythonXX\Scripts pyinstaller -w -F main
 프로젝트 루트 폴더 아래처럼 만들고 
 main.py 실행 파일 따로 만들어서 main.py를 exe파일로 생성
 
-project_root/
-│
-├── classi/
-│   ├── __init__.py
-│   ├── excel_clsfn.py
-│   ├── send_email.py
-│   ├── data_store.py
-│
-── gui/
-│   ├── __init__.py
-│   ├── order_excel_email_classify.ui
-│
-└── main.py
+### project_root/
+### │
+### ├── classi/
+### │   ├── __init__.py
+### │   ├── excel_clsfn.py
+### │   ├── send_email.py
+### │   ├── data_store.py
+### │
+### ── gui/
+### │   ├── __init__.py
+### │   ├── order_excel_email_classify.ui
+### │
+### └── main.py
 
 
 
