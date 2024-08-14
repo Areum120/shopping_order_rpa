@@ -29,7 +29,7 @@ C:\Users\USERNAME\AppData\Roaming\Python\PythonXX\site-packages
 
 ### 2. 확인한 설치 경로 /Scripts 경로 추가해서 아래 명령어로 설치 
 
-C:\Users\USERNAME\AppData\Roaming\Python\PythonXX\Scripts\pyinstaller -w -F main.py
+C:\Users\USERNAME\AppData\Roaming\Python\PythonXX\Scripts\pyinstaller --onefile --noconsole classi\excel_clsfn.py
 
 ui 경로를 찾을 수 없으면 아래 명령어로 설치
 
@@ -37,8 +37,8 @@ C:\Users\USERNAME\AppData\Roaming\Python\PythonXX\Scripts\pyinstaller --onefile 
 
 
 만약 import한 다른 py 파일을 못찾을 경우
-프로젝트 루트 폴더 아래처럼 만들고 
-main.py 실행 파일 따로 만들어서 main.py를 exe파일로 생성
+프로젝트 루트 폴더 아래처럼 만들고 excel_clsfn.py를 exe파일로 생성
+다른 py파일 import할땐 같은 폴더라도 classi.data_store처럼 꼭 명시
 
 ### project_root/
 ### │
@@ -51,8 +51,8 @@ main.py 실행 파일 따로 만들어서 main.py를 exe파일로 생성
 ### ── gui/
 ### │   ├── __init__.py
 ### │   ├── order_excel_email_classify.ui
-### │
-### └── main.py
+
+
 
 
 
