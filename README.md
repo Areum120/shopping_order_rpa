@@ -29,11 +29,11 @@ C:\Users\USERNAME\AppData\Roaming\Python\PythonXX\site-packages
 
 ### 2. 확인한 설치 경로 /Scripts 경로 추가해서 아래 명령어로 설치 
 
-C:\Users\USERNAME\AppData\Roaming\Python\PythonXX\Scripts pyinstaller -w -F main.py
+C:\Users\USERNAME\AppData\Roaming\Python\PythonXX\Scripts\pyinstaller -w -F main.py
 
 ui 경로를 찾을 수 없으면 아래 명령어로 설치
 
-C:\Users\USERNAME\AppData\Roaming\Python\PythonXX\Scripts pyinstaller -w -F --add-data "gui/order_excel_email_classify.ui" main.py
+C:\Users\USERNAME\AppData\Roaming\Python\PythonXX\Scripts\pyinstaller --onefile --noconsole --add-data "gui/order_excel_email_classify.ui;gui" main.py
 
 
 만약 import한 다른 py 파일을 못찾을 경우
