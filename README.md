@@ -18,7 +18,8 @@ dist 폴더에 excel_clsfn.exe 파일 생성 확인
 ### app 실행
 
 # 24.08.15 update
-'pyinstaller'은(는) 내부 또는 외부 명령, 실행할 수 있는 프로그램, 또는
+
+## 'pyinstaller'은(는) 내부 또는 외부 명령, 실행할 수 있는 프로그램, 또는
 배치 파일이 아닙니다. 오류시 아래 참고
 
 ### 1. 설치 경로 찾기
@@ -53,7 +54,7 @@ C:\Users\USERNAME\AppData\Roaming\Python\PythonXX\Scripts\pyinstaller --onefile 
 ### │   ├── order_excel_email_classify.ui
 
 
-### 만약 상대경로 문제 발생시
+## 만약 상대경로 문제 발생시
 
 스크립트가 임시 디렉토리에서 실행될 경우 절대 경로를 설정해도 경로를 못찾을 수 있음
 
