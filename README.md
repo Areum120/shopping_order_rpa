@@ -59,9 +59,13 @@ C:\Users\USERNAME\AppData\Roaming\Python\PythonXX\Scripts\pyinstaller --onefile 
 
 스크립트가 임시 디렉토리에서 실행될 경우 절대 경로를 설정해도 경로를 못찾을 수 있음
 
+  base_path = os.path.dirname(os.path.abspath(__file__))
+  print(base_path)
+  ui_path = base_path + '\\gui\\order_excel_email_classify.ui'
+
 그럴 때는 ui 파일을 같이 실행파일 포함시킬 것
 
-pyinstaller --onefile --add-data "gui/order_excel_email_classify.ui;g
-ui" classi\excel_clsfn.py    
+pyinstaller -F excel_clsfn.py --add-data "gui/order_excel_email_classify.ui;gui"
+ 
 
 
