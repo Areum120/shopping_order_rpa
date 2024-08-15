@@ -9,11 +9,11 @@ pip install -r requirements.txt
 
 cd 폴더 설치 경로
 
-pyinstaller -w -F run.py
+pyinstaller -w -F classi\excel_clsfn.py
 
 ### build 완료 시
 
-dist 폴더에 run.exe 파일 생성 확인
+dist 폴더에 excel_clsfn.exe 파일 생성 확인
 
 ### app 실행
 
