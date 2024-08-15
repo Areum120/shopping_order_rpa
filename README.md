@@ -65,7 +65,7 @@ C:\Users\USERNAME\AppData\Roaming\Python\PythonXX\Scripts\pyinstaller --onefile 
 
 그럴 때는 ui 파일을 같이 실행파일 포함시킬 것
 
-pyinstaller -F excel_clsfn.py --add-data "gui/order_excel_email_classify.ui;gui"
+pyinstaller --onefile --add-data "gui/order_excel_email_classify.ui;gui" excel_clsfn.py
  
 
 
