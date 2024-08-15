@@ -45,13 +45,14 @@ C:\Users\USERNAME\AppData\Roaming\Python\PythonXX\Scripts\pyinstaller --onefile 
 ### │
 ### ├── classi/
 ### │   ├── __init__.py
-### │   ├── excel_clsfn.py
 ### │   ├── send_email.py
 ### │   ├── data_store.py
 ### │
 ### ── gui/
 ### │   ├── __init__.py
 ### │   ├── order_excel_email_classify.ui
+### │
+### │── excel_clsfn.py
 
 
 ## 만약 상대경로 문제 발생시
