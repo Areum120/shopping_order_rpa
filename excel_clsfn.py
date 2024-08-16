@@ -11,11 +11,35 @@ import classi.data_store
 class MainWindow(QMainWindow):
     def __init__(self):
         super(MainWindow, self).__init__()
-        order_ui = uic.loadUi(".\gui\order_excel_email_classify.ui", self)    # UI 요소를 함수에 연결
-        print(order_ui,":load 성공")
+        # UI 파일 상대 경로 설정
+        base_path = os.path.dirname(os.path.abspath(__file__))
+        print(base_path)
+        ui_path = base_path + '\\gui\\order_excel_email_classify.ui'
+        print(ui_path)
+        # UI 요소를 함수에 연결
+        order_ui = uic.loadUi(ui_path, self)
+        print(order_ui, ":load 성공")
+
+        if not os.path.exists(ui_path):
+            print(f"UI 파일을 찾을 수 없습니다: {ui_path}")
+
         self.folder_path = ""
+
+        # 디폴트로 바탕화면 경로를 lineEdit에 설정
+        default_path = os.path.join(os.path.expanduser("~"), "Desktop")
+        self.lineEdit.setText(default_path)
+
+        # 디폴트로 폴더 경로를 lineEdit2에 설정
+        default_folder_name = "Sherlock_folder"
+        default_folder_path = os.path.join(os.path.expanduser("~"), "Desktop", default_folder_name)
+        self.lineEdit_2.setText(default_folder_path)
+
+        # 폴더 자동 생성
+        self.start_auto_create_folder()
+
         # button_click
         self.pushButton.clicked.connect(self.select_directory)#선택
+        self.pushButton_2.clicked.connect(self.create_folder)  # 폴더 생성 함수 연결
         self.pushButton_3.clicked.connect(self.upload_excel)#엑셀 파일 업로드
         self.pushButton_4.clicked.connect(self.upload_excel2)#엑셀 파일 업로드2
         self.pushButton_5.clicked.connect(self.start_excel_classification)#엑셀 분류 시작
@@ -32,13 +56,14 @@ class MainWindow(QMainWindow):
         self.label_15.setOpenExternalLinks(True)
         self.label_16.setOpenExternalLinks(True)
 
-
     # 원하는 경로를 검색해서 폴더 생성하기
     def select_directory(self):
-        folder_path = QFileDialog.getExistingDirectory(self, "선택")
+        # 바탕화면을 기본 경로로 설정
+        default_path = os.path.join(os.path.expanduser("~"), "Desktop")
+        # 폴더 선택 다이얼로그에서 기본 경로를 설정
+        folder_path = QFileDialog.getExistingDirectory(self, "선택", default_path)
         if folder_path:
             self.lineEdit.setText(folder_path)#경로 입력
-            self.pushButton_2.clicked.connect(self.create_folder)# 폴더 생성 함수 연결
             self.label.setText(f"폴더 이름을 적고 생성/지정 버튼을 클릭해주세요.")
             self.label.setStyleSheet("color: red;")
         else:
@@ -51,7 +76,7 @@ class MainWindow(QMainWindow):
         classi.data_store.file_path = os.path.join(directory, self.folder_name)
 
         if self.folder_name and directory:
-            classi.data_storedata_store.file_path = os.path.join(directory, self.folder_name)
+            classi.data_store.file_path = os.path.join(directory, self.folder_name)
             print(self.folder_path)
 
             # 폴더가 이미 존재하는지 확인
@@ -78,6 +103,9 @@ class MainWindow(QMainWindow):
             self.label.setText("폴더 이름과 경로를 입력하세요.")
             self.label.setStyleSheet("color: red;")
 
+    # 프로그램 시작 시 create_folder 호출
+    def start_auto_create_folder(self):
+        self.create_folder()
 
     # 엑셀 파일 업로드 기능
     def upload_excel(self):
@@ -144,15 +172,15 @@ class MainWindow(QMainWindow):
                         # 파일 저장
                         if partner_name != '':
                             df_filtered = self.order_list[self.order_list['상품명'].str.contains(brand_name)]
-                            df_filtered.to_excel(f'{classi.data_storedata_store.file_path}/{self.nowToday}_{partner_name}.xlsx')
+                            df_filtered.to_excel(f'{classi.data_store.file_path}/{self.nowToday}_{partner_name}.xlsx')
                         else:
                             self.label_3.setText(f"없는 brand name:, '{brand_name}', '{row['상품명']}'")
-                        print(classi.data_store.data_store.file_path)
+                        print(classi.data_store.file_path)
                     # 폴더 안의 엑셀 파일 갯수 세서 출력
-                    files_and_dirs = os.listdir(classi.data_storedata_store.file_path)
+                    files_and_dirs = os.listdir(classi.data_store.file_path)
                     print(files_and_dirs)
                     file_count = sum(
-                            1 for item in files_and_dirs if os.path.isfile(os.path.join(classi.data_store.data_store.file_path, item)))
+                            1 for item in files_and_dirs if os.path.isfile(os.path.join(classi.data_store.file_path, item)))
                     print(file_count)
                     return self.label_3.setText(f"'총 전체 주문건수 {len(self.order_list)}건, {file_count}개 업체 파일이 만들어졌습니다")
                     self.label_2.setText(f"엑셀 파일을 분류하고 '{folder_name}' 폴더에 저장했습니다.")
@@ -171,7 +199,7 @@ class MainWindow(QMainWindow):
         # info_df = pd.read_excel(self.df2, engine='openpyxl')
         print(self.df2)
         # data폴더 파일 이름 목록 불러오기
-        file_list = os.listdir(classi.data_store.data_store.file_path)  # 경로
+        file_list = os.listdir(classi.data_store.file_path)  # 경로
         # print(file_list)#attachment에 확장자명까지 기입
         # email_list.xlsx 파일이 포함되어 있다면 제거
         if 'email_list.xlsx' in file_list:
@@ -227,11 +255,11 @@ class MainWindow(QMainWindow):
         print(email_list)
         # 인덱스 컬럼 없이 값만 엑셀 저장
         # 저장할 경로
-        classi.data_store.data_store.email_file_path = f"{classi.data_store.data_store.file_path}/email_list.xlsx"
-        email_list.to_excel(classi.data_store.data_store.email_file_path, index=False, header=True)
+        classi.data_store.email_file_path = f"{classi.data_store.file_path}/email_list.xlsx"
+        email_list.to_excel(classi.data_store.email_file_path, index=False, header=True)
         print('파일 생성 완료')
         # 파일 열기
-        os.startfile(classi.data_store.data_store.email_file_path)
+        os.startfile(classi.data_store.email_file_path)
         self.label_4.setText("메일 내용 확인 후 메일 발송해주세요.")
         self.label_4.setStyleSheet("color: red;")
         self.email_content_confirmed = True  # 메일 내용이 확인되었음을 표시
@@ -249,8 +277,7 @@ class MainWindow(QMainWindow):
                 email_id = self.lineEdit_8.text()  # 이메일
                 email_pw = self.lineEdit_9.text()  # 앱비밀번호
                 # 이메일 발송을 위한 엑셀 파일 경로 지정
-                # 이메일 발송을 위한 엑셀 파일 경로 지정
-                email_file_path = f"{classi.data_store.data_store.file_path}\email_list.xlsx"
+                email_file_path = f"{classi.data_store.file_path}\email_list.xlsx"
                 print(email_file_path)  # 디버깅을 위해 경로 출력
                 # 이메일 발송 클래스 인스턴스 생성 및 발송
                 sender = Send(email_id, email_pw, email_file_path,self.label_4)
@@ -272,3 +299,8 @@ class MainWindow(QMainWindow):
     sys._excepthook = sys.excepthook
     sys.excepthook = my_exception_hook
 
+if __name__ == "__main__":
+    app = QApplication(sys.argv)
+    main_window = MainWindow()
+    main_window.show()
+    sys.exit(app.exec_())
