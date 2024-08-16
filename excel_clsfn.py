@@ -1,5 +1,6 @@
 import os
 import sys
+import subprocess
 from datetime import datetime
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import Qt
@@ -31,8 +32,10 @@ class MainWindow(QMainWindow):
 
         # 디폴트로 폴더 경로를 lineEdit2에 설정
         default_folder_name = "Sherlock_folder"
-        default_folder_path = os.path.join(os.path.expanduser("~"), "Desktop", default_folder_name)
-        self.lineEdit_2.setText(default_folder_path)
+        self.lineEdit_2.setText(default_folder_name)
+
+        # 비밀번호 입력 필드 설정 (마스킹 처리)
+        self.lineEdit_9.setEchoMode(QLineEdit.Password)
 
         # 폴더 자동 생성
         self.start_auto_create_folder()
@@ -72,30 +75,26 @@ class MainWindow(QMainWindow):
 
     def create_folder(self):
         self.folder_name = self.lineEdit_2.text()
+        folder_path = os.path.join(os.path.expanduser("~"), "Desktop", self.folder_name)
         directory = self.lineEdit.text()  # 입력한 경로
         classi.data_store.file_path = os.path.join(directory, self.folder_name)
 
         if self.folder_name and directory:
-            classi.data_store.file_path = os.path.join(directory, self.folder_name)
-            print(self.folder_path)
-
             # 폴더가 이미 존재하는지 확인
-            if os.path.exists(self.folder_path):
-                self.label.setText(f"결과 파일이 저장될 '{self.folder_name}' 폴더가 이미 존재합니다.")
+            if os.path.exists(classi.data_store.file_path):
+                self.label.setText(f"'{folder_path}' 폴더가 이미 존재합니다.")
                 self.label.setStyleSheet("color: red;")
-                # 현재 작업 디렉토리 변경
-                os.chdir(directory)
                 # 폴더 열기
-                os.system('explorer "{}"'.format(self.folder_name))
+                subprocess.run(['explorer', classi.data_store.file_path])
             else:
                 try:
-                    os.makedirs(classi.data_store.file_path)#폴더 생성 함수
-                    self.label.setText(f"결과 파일이 저장될'{self.folder_name}' 폴더가 생성되었습니다.")
+                    os.makedirs(classi.data_store.file_path)  # 폴더 생성 함수
+                    self.label.setText(f"'{folder_path}' 폴더가 생성되었습니다.")
                     self.label.setStyleSheet("color: green;")
                     # 현재 작업 디렉토리 변경
                     os.chdir(directory)
                     # 폴더 열기
-                    os.system('explorer "{}"'.format(self.folder_name))
+                    subprocess.run(['explorer', classi.data_store.file_path])
                 except OSError as e:
                     self.label.setText(f"폴더를 생성하는 동안 오류가 발생했습니다: {e}")
                     self.label.setStyleSheet("color: red;")
@@ -183,7 +182,7 @@ class MainWindow(QMainWindow):
                             1 for item in files_and_dirs if os.path.isfile(os.path.join(classi.data_store.file_path, item)))
                     print(file_count)
                     return self.label_3.setText(f"'총 전체 주문건수 {len(self.order_list)}건, {file_count}개 업체 파일이 만들어졌습니다")
-                    self.label_2.setText(f"엑셀 파일을 분류하고 '{folder_name}' 폴더에 저장했습니다.")
+                    self.label_2.setText(f"엑셀 파일을 분류하고 '{self.folder_name}' 폴더에 저장했습니다.")
                     # 현재 작업 디렉토리 변경
                     os.chdir(excelfolder_path)
                     # 폴더 열기
