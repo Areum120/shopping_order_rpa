@@ -115,9 +115,16 @@ class MainWindow(QMainWindow):
             try:
                 # 엑셀 파일 읽기 (pandas 사용)
                 self.order_list = pd.read_excel(file_path)
+                # '상품명' 칼럼이 있는지 확인
+                if '상품명' not in self.order_list.columns:
+                    # '상품명' 칼럼이 없으면 메시지 출력
+                    self.label_2.setText("파일의 칼럼명을 '상품명'으로 일치시켜주세요.")
+                    self.label_2.setStyleSheet("color: red;")
+                else:
+                    # '상품명' 칼럼이 있으면 성공 메시지 출력
+                    self.label_2.setText("엑셀 파일을 성공적으로 업로드했습니다.")
+                    self.label_2.setStyleSheet("color: green;")
                 print(self.order_list)
-                self.label_2.setText(f"엑셀 파일을 성공적으로 업로드했습니다.")
-                self.label_2.setStyleSheet("color: green;")
             except Exception as e:
                 self.label_2.setText(f"엑셀 파일을 업로드하는 동안 오류가 발생했습니다: {e}")
                 self.label_2.setStyleSheet("color: red;")
@@ -126,12 +133,17 @@ class MainWindow(QMainWindow):
     def upload_excel2(self):
         file_path, _ = QFileDialog.getOpenFileName(self, "엑셀 파일 선택", "", "Excel Files (*.xls;*.xlsx)")
         self.lineEdit_4.setText(file_path)  # 경로 입력
-
         if file_path:
             try:
                 # 엑셀 파일 읽기 (pandas 사용)
                 self.df2 = pd.read_excel(file_path)
                 print(self.df2)
+                # '브랜드'와 '업체명' 칼럼 확인
+                if '브랜드' not in self.df2.columns or '업체명' not in self.df2.columns or '담당자' not in self.df2.columns or '이메일' not in self.df2.columns or '참조이메일' not in self.df2.columns:
+                    # 필요한 칼럼이 없으면 메시지 출력
+                    self.label_2.setText("파일의 칼럼명을 '브랜드','업체명','담당자','이메일','참조이메일'으로 일치시켜주세요.")
+                    self.label_2.setStyleSheet("color: red;")
+                    return
                 self.brands = self.df2['브랜드'].to_list()
                 # df_partners['업체명'] 칼럼의 NaN 값을 앞의 값으로 채우기
                 self.df2['업체명'] = self.df2['업체명'].fillna(method='ffill')
