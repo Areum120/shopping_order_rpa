@@ -8,6 +8,7 @@ from PyQt5 import uic
 import pandas as pd
 from classi.send_email import Send
 import classi.data_store
+import classi.set_excel_form
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -41,14 +42,14 @@ class MainWindow(QMainWindow):
         self.start_auto_create_folder()
 
         # button_click
-        self.pushButton.clicked.connect(self.select_directory)#선택
-        self.pushButton_2.clicked.connect(self.create_folder)  # 폴더 생성 함수 연결
-        self.pushButton_3.clicked.connect(self.upload_excel)#엑셀 파일 업로드
-        self.pushButton_4.clicked.connect(self.upload_excel2)#엑셀 파일 업로드2
-        self.pushButton_5.clicked.connect(self.start_excel_classification)#엑셀 분류 시작
-        self.pushButton_6.clicked.connect(self.confirm_email)#이메일 내용 확인
-        self.pushButton_8.clicked.connect(self.send_email)#이메일 발송
-        self.email_content_confirmed = False # 메일 내용 확인 여부
+        self.pushButton.clicked.connect(self.select_directory)# 선택
+        self.pushButton_2.clicked.connect(self.create_folder)# 폴더 생성 함수 연결
+        self.pushButton_3.clicked.connect(self.upload_excel)# 엑셀 파일 업로드
+        self.pushButton_4.clicked.connect(self.upload_excel2)# 엑셀 파일 업로드2
+        self.pushButton_5.clicked.connect(self.start_excel_classification)# 엑셀 분류 시작
+        self.pushButton_6.clicked.connect(self.confirm_email)# 이메일 내용 확인
+        self.pushButton_8.clicked.connect(self.send_email)# 이메일 발송
+        self.email_content_confirmed = False# 메일 내용 확인 여부
 
         #label_link
         # QLabel의 textFormat을 HTML로 설정
@@ -181,6 +182,8 @@ class MainWindow(QMainWindow):
                     file_count = sum(
                             1 for item in files_and_dirs if os.path.isfile(os.path.join(classi.data_store.file_path, item)))
                     print(file_count)
+                    # 엑셀 분류 작업 완료 후 엑셀 폼 설정 작업 호출
+                    classi.set_excel_form.modify_form(classi.data_store.file_path)
                     return self.label_3.setText(f"'총 전체 주문건수 {len(self.order_list)}건, {file_count}개 업체 파일이 만들어졌습니다")
                     self.label_2.setText(f"엑셀 파일을 분류하고 '{self.folder_name}' 폴더에 저장했습니다.")
                     # 현재 작업 디렉토리 변경
@@ -193,75 +196,81 @@ class MainWindow(QMainWindow):
 
     def confirm_email(self):
         # 전체 칼럼 보기 설정
-        pd.set_option('display.max_columns', None)
-        # 협력사 data 불러오기
-        # info_df = pd.read_excel(self.df2, engine='openpyxl')
-        print(self.df2)
-        # data폴더 파일 이름 목록 불러오기
-        file_list = os.listdir(classi.data_store.file_path)  # 경로
-        # print(file_list)#attachment에 확장자명까지 기입
-        # email_list.xlsx 파일이 포함되어 있다면 제거
-        if 'email_list.xlsx' in file_list:
-            file_list.remove('email_list.xlsx')
-        # 확장자명 제외한 이름 출력
-        file_name = []
-        for file in file_list:
-            if file.count(".") == 1:
-                name = file.split('.')[0]
-                file_name.append(name)
-            else:
-                for i in range(len(file) - 1, 0, -1):
-                    if file[i] == '.':
-                        file_name.append(file[:i])
-                        break
-        print(file_name)
-        # print(len(file_name))#22개
+        try:
+            pd.set_option('display.max_columns', None)
+            # 협력사 data 불러오기
+            # info_df = pd.read_excel(self.df2, engine='openpyxl')
+            print(self.df2)
+            # data폴더 파일 이름 목록 불러오기
+            file_list = os.listdir(classi.data_store.file_path)  # 경로
+            # print(file_list)#attachment에 확장자명까지 기입
+            # email_list.xlsx 파일이 포함되어 있다면 제거
+            if 'email_list.xlsx' in file_list:
+                file_list.remove('email_list.xlsx')
+            # 확장자명 제외한 이름 출력
+            file_name = []
+            for file in file_list:
+                if file.count(".") == 1:
+                    name = file.split('.')[0]
+                    file_name.append(name)
+                else:
+                    for i in range(len(file) - 1, 0, -1):
+                        if file[i] == '.':
+                            file_name.append(file[:i])
+                            break
+            print(file_name)
+            # print(len(file_name))#22개
 
-        # 리스트 컴프리헨션을 사용하여 문자열만 추출
-        result = [item.split('_', 1)[1] for item in file_name]
-        print(result)
-        title = self.lineEdit_6.text()
-        text = self.textEdit.toPlainText()
-        # 데이터 출력 (디버깅용)
-        print(title)
-        print(text)
-        # email_list 만들기
-        # 브랜드 칼럼에서 일부 일치하는 항목(문자열 아닌 값 무시) 필터링
-        matching_rows = self.df2[
-            self.df2['업체명'].apply(lambda x: isinstance(x, str) and any(brand in x for brand in result))]
-        print(matching_rows)
-        # nan값 제외
-        email_list = matching_rows['이메일'].dropna().tolist()
-        ref_email_list = matching_rows['참조이메일'].dropna().tolist()
+            # 리스트 컴프리헨션을 사용하여 문자열만 추출
+            result = [item.split('_', 1)[1] for item in file_name]
+            print(result)
+            title = self.lineEdit_6.text()
+            text = self.textEdit.toPlainText()
+            # 데이터 출력 (디버깅용)
+            print(title)
+            print(text)
+            # email_list 만들기
+            # 브랜드 칼럼에서 일부 일치하는 항목(문자열 아닌 값 무시) 필터링
+            matching_rows = self.df2[
+                self.df2['업체명'].apply(lambda x: isinstance(x, str) and any(brand in x for brand in result))]
+            print(matching_rows)
+            # nan값 제외
+            email_list = matching_rows['이메일'].dropna().tolist()
+            ref_email_list = matching_rows['참조이메일'].dropna().tolist()
 
-        # 불러온 파일명은 그대로 첨부파일 명에 기재
-        print(email_list)
-        print(ref_email_list)
-        print(file_list)
-        print(len(email_list))
-        print(len(ref_email_list))
-        print(len(file_list))
+            # 불러온 파일명은 그대로 첨부파일 명에 기재
+            print(email_list)
+            print(ref_email_list)
+            print(file_list)
+            print(len(email_list))
+            print(len(ref_email_list))
+            print(len(file_list))
 
-       # df 생성(recipient, title, text, attachment)
-        table_name = {
-            '받는메일': email_list,
-            '참조': ref_email_list,
-            '제목': title,  # title 동일
-            '내용': text,  # text 동일
-            '첨부파일': file_list
-        }
-        email_list = pd.DataFrame(table_name)
-        print(email_list)
-        # 인덱스 컬럼 없이 값만 엑셀 저장
-        # 저장할 경로
-        classi.data_store.email_file_path = f"{classi.data_store.file_path}/email_list.xlsx"
-        email_list.to_excel(classi.data_store.email_file_path, index=False, header=True)
-        print('파일 생성 완료')
-        # 파일 열기
-        os.startfile(classi.data_store.email_file_path)
-        self.label_4.setText("메일 내용 확인 후 메일 발송해주세요.")
-        self.label_4.setStyleSheet("color: red;")
+           # df 생성(recipient, title, text, attachment)
+            table_name = {
+                '받는메일': email_list,
+                '참조': ref_email_list,
+                '제목': title,  # title 동일
+                '내용': text,  # text 동일
+                '첨부파일': file_list
+            }
+            email_list = pd.DataFrame(table_name)
+            print(email_list)
+            # 인덱스 컬럼 없이 값만 엑셀 저장
+            # 저장할 경로
+            classi.data_store.email_file_path = f"{classi.data_store.file_path}/email_list.xlsx"
+            email_list.to_excel(classi.data_store.email_file_path, index=False, header=True)
+            print('파일 생성 완료')
+            # 파일 열기
+            os.startfile(classi.data_store.email_file_path)
+            self.label_4.setText(f"메일 내용을 작성한 파일이 만들어졌습니다.")
+            self.label_4.setStyleSheet("color: green;")
+        except Exception as e:
+            self.label_4.setText(f"상품명/발주처 파일을 업로드 후 클릭해주세요.")
+            print(e)
+            self.label_4.setStyleSheet("color: red;")
         self.email_content_confirmed = True  # 메일 내용이 확인되었음을 표시
+
 
     def send_email(self):
         if not self.email_content_confirmed:

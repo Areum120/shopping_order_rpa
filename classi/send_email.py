@@ -68,7 +68,6 @@ class Send:
             # 본문 구성
             msg.set_content(text)
 
-
             # 파일 첨부
             if attachment:
                 filenm = Path(attachment).name
