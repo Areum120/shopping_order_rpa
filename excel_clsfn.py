@@ -233,6 +233,12 @@ class MainWindow(QMainWindow):
             print(file_name)
             # print(len(file_name))#22개
 
+            # 파일 이름 중복 여부 확인
+            if len(file_name) != len(set(file_name)):
+                self.label_4.setText("같은 이름의 파일을 중복 파일을 먼저 정리해주세요.")
+                self.label_4.setStyleSheet("color: red;")
+                return
+
             # 리스트 컴프리헨션을 사용하여 문자열만 추출
             result = [item.split('_', 1)[1] for item in file_name]
             print(result)
